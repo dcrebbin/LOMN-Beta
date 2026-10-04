@@ -54,19 +54,20 @@ def md5file(filename):
 # Snapshot functions
 #
 # (A snapshot is just a CaseInsensitiveDict of filename to md5 hash as a hex string.)
+# Filenames are kept with '/' separators in memory, and written with '\\' on disk.
 # 
 def create_snapshot(directory):
 	result = CaseInsensitiveDict()
 	for dirname, dirnames, filenames in os.walk(directory):
 		dirname_relative = os.path.relpath(dirname, directory)
 		for filename in filenames:
-			result [os.path.normpath(os.path.join(dirname_relative, filename))] = md5file(os.path.join(dirname, filename))
+			result [os.path.normpath(os.path.join(dirname_relative, filename)).replace('\\', '/')] = md5file(os.path.join(dirname, filename))
 	return result
 
 def write_snapshot(snapshot, filename):
 	file = open(filename, "w")
 	for filename, contentshash in snapshot.items():
-		file.write(filename + ":" + contentshash + "\n")
+		file.write(filename.replace('/', '\\') + ":" + contentshash + "\n")
 	file.close()
 
 def read_snapshot(filename):
@@ -76,7 +77,7 @@ def read_snapshot(filename):
 	for line in file:
 		if len(line) > 0:
 			parts = line.strip().split(":")
-			result[parts[0]] = parts[1]
+			result[parts[0].replace('\\', '/')] = parts[1]
 	file.close()
 
 	return result

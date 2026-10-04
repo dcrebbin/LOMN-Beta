@@ -1,11 +1,35 @@
-SHELL = cmd
-BLKTOOL = python tools\blkfile.py
 COMPRESSION = decompressed # can also set to compressed
 #OSATOOL = sage-js
 #OSAARGS = res:osi:asm:sassemble
-LSSTOOL = tools\lssc\lssc.exe
 LSSARGS = Compile -y -r
+
+ifeq ($(OS),Windows_NT)
+SHELL = cmd
+BLKTOOL = python tools\blkfile.py
+LSSTOOL = tools\lssc\lssc.exe
 RELEASETOOL = python tools\releasetool.py
+SFXTOOL = ..\..\tools\7zip\7za.exe a -sfx7z.sfx
+# $(call path,p) $(call mkdir_p,dir/) $(call copy,src,dst) $(call rm_f,file) $(call rm_rf,dir)
+DEVNULL = NUL
+path = $(subst /,\,$(1))
+mkdir_p = if not exist $(subst /,\,$(1))NUL mkdir $(subst /,\,$(1))
+copy = copy /B $(subst /,\,$(1)) $(strip $(subst /,\,$(2))) > $(DEVNULL)
+rm_f = if exist $(subst /,\,$(1)) del $(subst /,\,$(1))
+rm_rf = if exist $(subst /,\,$(1))\NUL rmdir $(subst /,\,$(1)) /s /q
+else
+# macOS / Linux: needs python3, mono (for lssc) and 7za (p7zip) for releases
+SHELL = /bin/sh
+BLKTOOL = python3 tools/blkfile.py
+LSSTOOL = mono tools/lssc/lssc.exe
+RELEASETOOL = python3 tools/releasetool.py
+SFXTOOL = 7za a -sfx../../tools/7zip/7z.sfx
+DEVNULL = /dev/null
+path = $(1)
+mkdir_p = mkdir -p "$(1)"
+copy = cp "$(1)" "$(strip $(2))"
+rm_f = rm -f "$(1)"
+rm_rf = rm -rf "$(1)"
+endif
 BLOCKFILES = Main.blk Art/Art.blk characters/msqt.blk characters/wind.blk characters/gali.blk characters/tahu.blk characters/lewa.blk characters/mudm.blk characters/rptl.blk characters/rrun.blk characters/bats.blk characters/sfsh.blk characters/ibat.blk characters/oewa.blk characters/dfly.blk characters/bspd.blk characters/imon.blk characters/pira.blk characters/spid.blk characters/vine.blk characters/tspd.blk characters/crb1.blk characters/vlgr.blk characters/lsrp.blk characters/hydr.blk characters/turt.blk characters/shrk.blk characters/ttrt.blk characters/onua.blk characters/tfsh.blk characters/bull.blk characters/nUju.blk characters/btfr.blk characters/Textures.blk characters/bugz.blk characters/vaka.blk characters/wrat.blk characters/ssss.blk characters/drag.blk characters/bsrp.blk characters/kopa.blk characters/poha.blk characters/mata.blk characters/rkmn.blk characters/noka.blk characters/fbug.blk characters/when.blk Languages/lang_swe.blk Languages/lang_dan.blk Languages/lang_dut.blk Languages/lang_spa.blk Languages/lang_frn.blk Languages/lang_eng.blk Languages/lang_ger.blk Languages/lang_ita.blk Sounds/sounds.blk Art/PrinterPics/printerart.blk levels/fren/frnt.blk levels/fren/fren.blk levels/lev0/frnt.blk levels/lev0/lev0.blk levels/lev1/atrm.blk levels/lev1/bech.blk levels/lev1/ptv1.blk levels/lev1/bugs.blk levels/lev1/l1a8.blk levels/lev1/l1a1.blk levels/lev1/pzzl.blk levels/lev1/vllg.blk levels/lev1/scrp.blk levels/lev1/clf2.blk levels/lev1/shrn.blk levels/lev1/lev1.blk levels/lev1/spcv.blk levels/lev1/tura.blk levels/lev1/l1a3.blk levels/lev1/cave.blk levels/lev1/hk01.blk levels/lev1/clf1.blk levels/lev1/mud0.blk levels/lev1/l1a7.blk levels/lev2/vtnl.blk levels/lev2/strt.blk levels/lev2/wthk.blk levels/lev2/mwat.blk levels/lev2/vllg.blk levels/lev2/lev2.blk levels/lev2/hydr.blk levels/lev2/takv.blk levels/lev2/vlgs.blk levels/lev2/evac.blk levels/lev2/tura.blk levels/lev2/mtop.blk levels/lev2/ttun.blk levels/lev2/mtup.blk levels/lev2/gly3.blk levels/lev2/hk01.blk levels/lev2/ghut.blk levels/lev2/shrn.blk levels/lev3/lev3.blk levels/lev3/gly1.blk levels/lev3/blr2.blk levels/lev3/bkik.blk levels/lev3/vllg.blk levels/lev3/boss.blk levels/lev3/blr1.blk levels/lev3/blcv.blk levels/lev3/xrod.blk levels/lev3/tura.blk levels/lev3/rkfl.blk levels/lev3/hutt.blk levels/lev3/mtup.blk levels/lev3/gly3.blk levels/lev3/bldr.blk levels/lev3/ptos.blk levels/lev3/shrn.blk levels/lev4/visn.blk levels/lev4/well.blk levels/lev4/strt.blk levels/lev4/brd4.blk levels/lev4/path.blk levels/lev4/gly1.blk levels/lev4/mosh.blk levels/lev4/swrd.blk levels/lev4/snfl.blk levels/lev4/vllg.blk levels/lev4/boss.blk levels/lev4/lev4.blk levels/lev4/haka.blk levels/lev4/Tele.blk levels/lev4/crss.blk levels/lev4/brd2.blk levels/lev4/lev4c.blk levels/lev4/maz2.blk levels/lev4/hutt.blk levels/lev4/icmz.blk levels/lev4/brd3.blk levels/lev4/maz1.blk levels/lev4/tura.blk levels/lev4/shrn.blk levels/lev4/snbd.blk levels/lev5/lev5.blk levels/lev5/le03.blk levels/lev5/le04.blk levels/lev5/gly1.blk levels/lev5/hive.blk levels/lev5/vllg.blk levels/lev5/boss.blk levels/lev5/lep1.blk levels/lev5/le08.blk levels/lev5/shrn.blk levels/lev5/le02.blk levels/lev5/mtup.blk levels/lev5/lep2.blk levels/lev5/tura.blk levels/lev5/room.blk levels/lev5/le01.blk levels/lev5/cave.blk levels/lev5/gly3.blk levels/lev6/ta08.blk levels/lev6/ta12.blk levels/lev6/ta05.blk levels/lev6/fvil.blk levels/lev6/vllg.blk levels/lev6/ta02.blk levels/lev6/ta11.blk levels/lev6/boss.blk levels/lev6/ta14.blk levels/lev6/tvil.blk levels/lev6/shrn.blk levels/lev6/ta07.blk levels/lev6/tp02.blk levels/lev6/ta01.blk levels/lev6/ta13.blk levels/lev6/ta04.blk levels/lev6/tura.blk levels/lev6/lev6.blk levels/lev6/hutt.blk levels/lev6/tp01.blk levels/lev6/mtup.blk levels/lev6/ta03.blk levels/lev6/ta09.blk levels/lev7/tahu.blk levels/lev7/lewa.blk levels/lev7/phtu.blk levels/lev7/onua.blk levels/lev7/lev7.blk levels/lev7/kpka.blk levels/lev7/gali.blk	
 NATIVE_SOURCES = $(wildcard ./native/*.*) $(wildcard ./native/*/*.*)
 NATIVE_OUTPUTS = $(patsubst ./native/%,./build/%, $(NATIVE_SOURCES))
@@ -17,11 +41,15 @@ default: build
 build: native script data blockfiles
 
 clean:
-	@if exist build\NUL rmdir build /s /q
-	@if exist packaged\NUL rmdir packaged /s /q
+	@$(call rm_rf,build)
+	@$(call rm_rf,packaged)
 
 run: build
+ifeq ($(OS),Windows_NT)
 	@start build\LEGOBionicle.exe
+else
+	@./tools/run-wine.sh
+endif
 
 rebuild:
 	@$(MAKE) -s clean
@@ -35,11 +63,11 @@ rebuild:
 release: ./packaged/PatchB.exe
 
 diff: build
-	$(RELEASETOOL) package build\ "vanilla snapshot.txt" packaged\patch\
+	$(RELEASETOOL) package build/ "vanilla snapshot.txt" packaged/patch/
 
 ./packaged/PatchB.exe: diff
-	@if exist packaged\PatchB.exe rmdir packaged\PatchB.exe
-	@cd packaged\patch\ && ..\..\tools\7zip\7za.exe a -sfx7z.sfx ..\PatchB.exe *
+	@$(call rm_f,packaged/PatchB.exe)
+	@cd $(call path,packaged/patch) && $(SFXTOOL) $(call path,../PatchB.exe) *
 
 # 
 # Utility recipe for extracting existing blockfiles.
@@ -48,9 +76,9 @@ extract: $(addsuffix .tmp,$(basename $(wildcard ./blockfiles_packed/*.blk) $(wil
 
 ./blockfiles_packed/%.tmp:
 	@echo Blockfile: $(addsuffix .blk,$(basename $@))
-	@if exist $(subst _packed,_extracted,$(subst /,\,$(basename $@)))\NUL rmdir $(subst _packed,_extracted,$(subst /,\,$(basename $@))) /s /q
-	@if not exist $(subst _packed,_extracted,$(subst /,\,$(dir $@)))\NUL mkdir $(subst _packed,_extracted,$(subst /,\,$(dir $@)))
-	@$(BLKTOOL) -o $(subst _packed,_extracted,$(subst /,\,$(basename $@)))\ $(addsuffix .blk,$(basename $@))
+	@$(call rm_rf,$(subst _packed,_extracted,$(basename $@)))
+	@$(call mkdir_p,$(subst _packed,_extracted,$(dir $@)))
+	@$(BLKTOOL) -o $(subst _packed,_extracted,$(basename $@))/ $(addsuffix .blk,$(basename $@))
 
 # 
 # Native files copied from native/
@@ -59,8 +87,8 @@ native: $(NATIVE_OUTPUTS)
 
 ./build/%: ./native/%
 	@echo Copying '$@'...
-	@if not exist $(subst /,\,$(dir $@))NUL mkdir $(subst /,\,$(dir $@))
-	@copy /B $(subst /,\,$<) $(strip $(subst /,\,$@)) > NUL
+	@$(call mkdir_p,$(dir $@))
+	@$(call copy,$<,$@)
 
 # 
 # Script files are compiled from script/ with sage-js
@@ -69,8 +97,8 @@ script: $(OSI_OUTPUT)
 
 $(OSI_OUTPUT): $(LSS_SOURCES)
 	@echo Compiling '$@'...
-	@if not exist $(subst /,\,$(dir $@))NUL mkdir $(subst /,\,$(dir $@))
-	$(LSSTOOL) $(LSSARGS) ./script -o $(subst /,\,$@)
+	@$(call mkdir_p,$(dir $@))
+	$(LSSTOOL) $(LSSARGS) ./script -o $(call path,$@)
 #	@$(OSATOOL) $(OSAARGS) $(subst /,\,$@) ./script/
 
 # 
@@ -82,8 +110,8 @@ data: $(DATA_OUTPUTS)
 
 ./build/data/%: ./data/%
 	@echo Copying '$@'...
-	@if not exist $(subst /,\,$(dir $@))NUL mkdir $(subst /,\,$(dir $@))
-	@copy /B $(subst /,\,$<) $(strip $(subst /,\,$@)) > NUL
+	@$(call mkdir_p,$(dir $@))
+	@$(call copy,$<,$@)
 
 # 
 # Blockfiles are packaged from blockfiles/ with blkfile.py
@@ -94,7 +122,7 @@ blockfiles: $(addprefix ./build/data/,$(BLOCKFILES))
 
 ./build/data/%.blk: $$(wildcard ./blockfiles/%/*.*)
 	@echo Packaging '$@'...
-	@if not exist $(subst /,\,$(dir $@))NUL mkdir $(subst /,\,$(dir $@))
-	@if not exist $(subst /,\,$(patsubst build/data/%.blk,./blockfiles/%,$@))\NUL mkdir $(subst /,\,$(patsubst build/data/%.blk,./blockfiles/%,$@))
-	@if exist $(subst /,\,$@) del $(subst /,\,$@)
-	@$(BLKTOOL) --$(if $(wildcard $(patsubst build/data/%.blk,./blockfiles/%/.nocompress,$@)),decompressed,$(COMPRESSION)) -o $@ $(patsubst build/data/%.blk,./blockfiles/%,$@) > NUL
+	@$(call mkdir_p,$(dir $@))
+	@$(call mkdir_p,$(patsubst build/data/%.blk,./blockfiles/%,$@)/)
+	@$(call rm_f,$@)
+	@$(BLKTOOL) --$(if $(wildcard $(patsubst build/data/%.blk,./blockfiles/%/.nocompress,$@)),decompressed,$(COMPRESSION)) -o $@ $(patsubst build/data/%.blk,./blockfiles/%,$@) > $(DEVNULL)
